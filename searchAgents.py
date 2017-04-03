@@ -455,9 +455,20 @@ def foodHeuristic(state, problem):
   Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount']
   """
   position, foodGrid = state
-  "*** YOUR CODE HERE ***"
-  return 0
-  
+  foodList = list(foodGrid.asList())
+  gs = problem.startingGameState
+
+  if not problem.heuristicInfo.get('foodDistanceGrid', False):
+    problem.heuristicInfo['foodDistanceGrid'] = {}
+
+  foodDistanceGrid = problem.heuristicInfo['foodDistanceGrid']
+
+  totalDistance = 0
+
+  if len(foodList) > 0:
+    return totalDistance
+
+
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
   def registerInitialState(self, state):
@@ -483,9 +494,27 @@ class ClosestDotSearchAgent(SearchAgent):
     walls = gameState.getWalls()
     problem = AnyFoodSearchProblem(gameState)
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-  
+    # Perform a BFS to find the closest dot.
+    fringe = util.Queue()
+    visited = []        # List of already visited nodes
+    action_list = []    # List of actions taken to get to the current node
+    total_cost = 0      # Cost to get to the current node
+    initial = problem.getStartState()   # Starting state of the problem
+
+    fringe.push((initial, action_list))
+
+    while fringe:
+      node, actions = fringe.pop()
+      if not node in visited:
+        visited.append(node)
+        if problem.isGoalState(node):
+          return actions
+        successors = problem.getSuccessors(node)
+        for successor in successors:
+          coordinate, direction, cost = successor
+          fringe.push((coordinate, actions + [direction]))
+          
+          
 class AnyFoodSearchProblem(PositionSearchProblem):
   """
     A search problem for finding a path to any food.
@@ -527,21 +556,23 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 ##################
 
 class ApproximateSearchAgent(Agent):
-  "Implement your contest entry here.  Change anything but the class name."
-  
-  def registerInitialState(self, state):
-    "This method is called before any moves are made."
-    "*** YOUR CODE HERE ***"
+  class ApproximateSearchAgent(Agent):
+    "Implement your contest entry here.  Change anything but the class name."
     
-  def getAction(self, state):
-    """
-    From game.py:
-    The Agent will receive a GameState and must return an action from
-    Directions.{North, South, East, West, Stop}
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def registerInitialState(self, state):
+      "This method is called before any moves are made."
+      "*** YOUR CODE HERE ***"
     
+    def getAction(self, state):
+      """
+			From game.py:
+			The Agent will receive a GameState and must return an action from
+			Directions.{North, South, East, West, Stop}
+			"""
+      "*** YOUR CODE HERE ***"
+      util.raiseNotDefined()
+      
+      
 def mazeDistance(point1, point2, gameState):
   """
   Returns the maze distance between any two points, using the search functions
